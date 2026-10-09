@@ -15,37 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Payload:', payload);
  
     try {
-      // Mandamos los datos de dos formas a la vez para asegurar que la Lambda los lea
-      // independientemente de cómo esté configurado el API Gateway.
-      const requestPayload = {
-        name: name,
-        email: email,
-        // Envolvemos también en "body" por si el Lambda lee event.body
-        body: JSON.stringify({ name, email })
-      };
-
+      // Enviamos JSON mediante POST.
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestPayload)
+        body: JSON.stringify(payload)
       });
  
-      const rawResult = await response.json();
+      const result = await response.json();
       
-      // Desenvolvemos la respuesta (por si API Gateway nos devuelve la respuesta cruda de la Lambda)
-      let finalResult = rawResult;
-      let statusCode = response.status;
-
-      if (rawResult && rawResult.body && typeof rawResult.body === 'string') {
-          finalResult = JSON.parse(rawResult.body);
-          statusCode = rawResult.statusCode || response.status;
-      }
-
-      if (statusCode !== 200) {
-          throw new Error(finalResult.error ?? 'Error al enviar');
-      }
+      if (!response.ok) throw new Error(result.error ?? 'Error al enviar');
  
-      alert(finalResult.message || 'Solicitud completada correctamente');
+      alert(result.message);
       form.reset();
     } catch (error) {
       console.error('Error API:', error);
