@@ -24,9 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
  
       const result = await response.json();
       
-      if (!response.ok) throw new Error(result.error ?? 'Error al enviar');
+      let data = result;
+      let isError = !response.ok;
+
+      // Detectamos si el Gateway no está usando Proxy (devuelve statusCode y body como string)
+      if (result.body && typeof result.body === 'string') {
+        data = JSON.parse(result.body);
+        isError = result.statusCode !== 200;
+      }
  
-      alert(result.message);
+      if (isError) throw new Error(data.error ?? 'Error al enviar');
+ 
+      alert(data.message);
       form.reset();
     } catch (error) {
       console.error('Error API:', error);
