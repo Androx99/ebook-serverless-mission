@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
  
       const result = await response.json();
+      console.log('Respuesta API completa:', result);
       if (!response.ok) throw new Error(result.error ?? 'Error al enviar');
  
       alert(result.message);
