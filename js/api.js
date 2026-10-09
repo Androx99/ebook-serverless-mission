@@ -23,11 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
  
       const result = await response.json();
-      // La Lambda devuelve el body como string JSON anidado dentro del wrapper proxy.
-      const body = JSON.parse(result.body);
-      if (result.statusCode !== 200) throw new Error(body.error ?? 'Error al enviar');
+      
+      if (!response.ok) throw new Error(result.error ?? 'Error al enviar');
  
-      alert(body.message);
+      alert(result.message);
       form.reset();
     } catch (error) {
       console.error('Error API:', error);
